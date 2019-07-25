@@ -1,6 +1,6 @@
 const {app, BrowserWindow, Tray, Menu} = require('electron');
 
-let win;
+let win = null;
 const path = require('path');
 let tray = null;
 
@@ -26,6 +26,7 @@ function createWindow() {
 
     //win.loadURL('file://' + __dirname + '/index.html');
 
+    //Use for Debug render process
     win.webContents.openDevTools();
 
     win.on('closed', ()=>{
@@ -48,21 +49,34 @@ function createWindow() {
 
     tray = new Tray(path.join(__dirname, '/assets/OneNote.png'));
     const contentMenu = Menu.buildFromTemplate([
-        {label: 'Show', click: ()=>{win.show()}},
-        {label: 'Quit', click: ()=>{win.destroy()}} 
+        {label: 'Show', click: ()=>{win.show();win.setSkipTaskbar(false);}},
+        {label: 'Quit', click: ()=>{win.destroy();}} 
     ]);
     tray.setContextMenu(contentMenu);
     tray.setToolTip("OneNote");
     
     //This is not worked in Linux
+    //Use it in windows & mac
+
+    //isVisble now is not a function??
     /*
     tray.on('click', ()=>{
-        win.isVisble()? win.hide(): win.show();
-        console.log(win.isVisble());
-        win.isVisble()? win.setSkipTaskbar(false): win.setSkipTaskbar(true);
+        win.isVisble? win.hide(): win.show();
+        console.log(win.isVisble);
+        win.isVisble? win.setSkipTaskbar(false): win.setSkipTaskbar(true);
     });
     */
+    
 }
+
+//Only allow one OnNote Electron instance
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit();
+  return;
+}
+
 
 app.on('ready', createWindow);
 
@@ -78,3 +92,4 @@ app.on('activate', ()=>{
     }
 });
 
+// OneNote can not work w/ onedrive.live.com in China, let us use IP addr to fix it

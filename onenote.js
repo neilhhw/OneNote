@@ -63,11 +63,30 @@ var myConsole = new nodeConsole.Console(process.stdout, process.stderr);
 onload = function (){
   let webview = this.document.getElementById("webview");
 
+  webview.addEventListener('dom-ready', ()=>{
+    webview.addEventListener('new-window', (e) => {
+      //This won't work
+      e.defaultPrevented = true;
+      this.console.log(e.url);
+      //This works
+      webview.loadURL(e.url);
+    });
+  });
+
+  //Add bottom bar to show loading URL
   const loadStart = () => {
     let bottombar = this.document.getElementById("bottom-bar");
     bottombar.innerText = webview.getAttribute('src');
+    bottombar.hidden = false;
   };
 
   webview.addEventListener('did-start-loading', loadStart);
+
+  const loadFinish = ()=>{
+    let bottombar = this.document.getElementById('bottom-bar');
+    bottombar.hidden = true;
+  };
+
+  webview.addEventListener('did-stop-loading', loadFinish);
 
 }
