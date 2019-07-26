@@ -8,7 +8,16 @@ function createWindow() {
 
     //const imgPath = path.join(process.resourcesPath, '/OneNote.png');
     //console.log(imgPath);
-    const imgPath = path.join(__dirname, "/assets/OneNote.png")
+    let iconPath = null;
+    //png format works fine both in windows and linux
+    iconPath = "/assets/OneNote.png";
+    
+    if (process.platform == "win32") {
+        iconPath = "/assets/OneNote.ico";
+        //console.log("This is win32, img path is", iconPath);
+    }
+
+    const imgPath = path.join(__dirname, iconPath);
     
     win = new BrowserWindow({
         width: 800,
@@ -27,7 +36,7 @@ function createWindow() {
     //win.loadURL('file://' + __dirname + '/index.html');
 
     //Use for Debug render process
-    win.webContents.openDevTools();
+    //win.webContents.openDevTools();
 
     win.on('closed', ()=>{
         win = null;
@@ -47,7 +56,7 @@ function createWindow() {
         tray.setHighlightMode('never');
     });
 
-    tray = new Tray(path.join(__dirname, '/assets/OneNote.png'));
+    tray = new Tray(path.join(__dirname, iconPath));
     const contentMenu = Menu.buildFromTemplate([
         {label: 'Show', click: ()=>{win.show();win.setSkipTaskbar(false);}},
         {label: 'Quit', click: ()=>{win.destroy();}} 
@@ -92,4 +101,4 @@ app.on('activate', ()=>{
     }
 });
 
-// OneNote can not work w/ onedrive.live.com in China, let us use IP addr to fix it
+// OneNote can not work w/ onedrive.live.com in China, let us use IP addr to fix it==

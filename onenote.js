@@ -65,7 +65,6 @@ onload = function (){
 
   webview.addEventListener('dom-ready', ()=>{
     webview.addEventListener('new-window', (e) => {
-      //This won't work
       e.defaultPrevented = true;
       this.console.log(e.url);
       //This works
@@ -73,10 +72,28 @@ onload = function (){
     });
   });
 
-  //Add bottom bar to show loading URL
   const loadStart = () => {
+
+    //First focus this webview as sometimes the input will lose
+    webview.focus();
+
+    //Add bottom bar to show loading URL
     let bottombar = this.document.getElementById("bottom-bar");
-    bottombar.innerText = webview.getAttribute('src');
+
+    let url = webview.getAttribute('src');
+    //webview.setAttribute('src', url);
+    //webview.loadURL(url);
+    this.console.log(url);
+
+    /*
+    if (url.includes("live")) {
+      url = url.replace("onedrive.live.com", "onedrive.com")
+      this.console.log("Address found", url);
+      webview.loadURL(url);
+    }
+    */
+    
+    bottombar.innerText = url;
     bottombar.hidden = false;
   };
 
