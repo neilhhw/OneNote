@@ -7,4 +7,6 @@
 ## 源码如何使用
 npm install
 npm start
+## 打包
+npm run package
 
